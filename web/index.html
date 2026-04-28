@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ESP32 FPGA Control Hub</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Dieu huong chinh">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true">EF</div>
+          <div>
+            <h1>ESP32 FPGA Hub</h1>
+            <p>Trung gian dieu khien ESP32 + FPGA</p>
+          </div>
+        </div>
+
+        <nav class="nav-list">
+          <a href="#connection" class="nav-item active">Ket noi</a>
+          <a href="#devices" class="nav-item">Thiet bi</a>
+          <a href="#fpga" class="nav-item">FPGA</a>
+          <a href="#io" class="nav-item">I/O</a>
+          <a href="#logic" class="nav-item">Analyzer</a>
+          <a href="#protocol" class="nav-item">Giao thuc</a>
+        </nav>
+
+        <section class="sidebar-status" aria-label="Trang thai he thong">
+          <span class="status-dot" id="statusDot"></span>
+          <div>
+            <strong id="statusText">Demo mode</strong>
+            <span id="statusSubtext">Chua ket noi ESP32</span>
+          </div>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Dieu khien trung gian</p>
+            <h2>ESP32 gateway cho board FPGA</h2>
+          </div>
+          <div class="top-actions">
+            <button class="icon-button" id="exportConfigBtn" title="Xuat cau hinh" aria-label="Xuat cau hinh">
+              <span aria-hidden="true">↓</span>
+            </button>
+            <button class="icon-button danger" id="panicBtn" title="Dung tat ca ngo ra" aria-label="Dung tat ca ngo ra">
+              <span aria-hidden="true">■</span>
+            </button>
+          </div>
+        </header>
+
+        <section class="metrics-strip" aria-label="So lieu nhanh">
+          <article class="metric">
+            <span>ESP32</span>
+            <strong id="metricEsp">offline</strong>
+          </article>
+          <article class="metric">
+            <span>FPGA</span>
+            <strong id="metricFpga">generic</strong>
+          </article>
+          <article class="metric">
+            <span>Latency</span>
+            <strong id="metricLatency">-- ms</strong>
+          </article>
+          <article class="metric">
+            <span>Packet</span>
+            <strong id="metricPackets">0</strong>
+          </article>
+        </section>
+
+        <section id="connection" class="panel-grid two-col">
+          <article class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Gateway</p>
+                <h3>Ket noi ESP32</h3>
+              </div>
+              <span class="pill" id="transportPill">demo</span>
+            </div>
+
+            <div class="segmented" role="tablist" aria-label="Kieu ket noi">
+              <button class="segment active" data-mode="websocket" type="button">WebSocket</button>
+              <button class="segment" data-mode="serial" type="button">USB Serial</button>
+              <button class="segment" data-mode="rest" type="button">REST</button>
+              <button class="segment" data-mode="firebase" type="button">Firebase</button>
+            </div>
+
+            <form class="connection-form" id="connectionForm">
+              <details style="margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 8px;">
+                <summary style="cursor: pointer; font-weight: bold; color: #a1a1aa; user-select: none;">Cài đặt kết nối chi tiết</summary>
+                <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 12px;">
+                  <label>
+                    <span>WebSocket URL</span>
+                    <input id="wsUrl" type="url" value="ws://192.168.4.1/ws" autocomplete="off" />
+                  </label>
+                  <label>
+                    <span>REST endpoint</span>
+                    <input id="restUrl" type="url" value="http://192.168.4.1/api/command" autocomplete="off" />
+                  </label>
+                  <label>
+                    <span>Device token</span>
+                    <input id="deviceToken" type="text" value="esp32-fpga-local" autocomplete="off" />
+                  </label>
+                  <div class="firebase-grid">
+                    <label>
+                      <span>Firebase API key</span>
+                      <input id="firebaseApiKey" type="text" value="AIzaSyDdJFdnQTXILXLmI1XHl1leUlprn61CBKo" autocomplete="off" />
+                    </label>
+                    <label>
+                      <span>Firebase auth domain</span>
+                      <input id="firebaseAuthDomain" type="text" value="esp32-5e620.firebaseapp.com" autocomplete="off" />
+                    </label>
+                    <label>
+                      <span>Firebase database URL</span>
+                      <input id="firebaseDatabaseUrl" type="url" value="https://esp32-5e620-default-rtdb.asia-southeast1.firebasedatabase.app" autocomplete="off" />
+                    </label>
+                    <label>
+                      <span>Firebase project ID</span>
+                      <input id="firebaseProjectId" type="text" value="esp32-5e620" autocomplete="off" />
+                    </label>
+                    <label>
+                      <span>Firebase app ID</span>
+                      <input id="firebaseAppId" type="text" value="1:731967187178:web:c4cf84af7a44602a908f93" autocomplete="off" />
+                    </label>
+                    <label>
+                      <span>Firebase base path</span>
+                      <input id="firebaseBasePath" type="text" value="esp32-fpga-hub" autocomplete="off" />
+                    </label>
+                  </div>
+                </div>
+              </details>
+
+              <div class="button-row">
+                <button class="primary-button" id="connectBtn" type="submit">Ket noi</button>
+                <button class="secondary-button" id="disconnectBtn" type="button">Ngat</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading" style="border-bottom: none;">
+              <div>
+                <p class="eyebrow">Board profile</p>
+                <h3>FPGA dang dieu khien</h3>
+              </div>
+              <select id="boardSelect" aria-label="Chon board FPGA"></select>
+            </div>
+          </article>
+        </section>
+
+
+        <section id="fpga" class="panel-grid two-col">
+          <article class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Command composer</p>
+                <h3>Lenh JSON gui ESP32</h3>
+              </div>
+              <button class="secondary-button compact" id="sendCustomBtn" type="button">Gui</button>
+            </div>
+            <textarea id="commandEditor" spellcheck="false"></textarea>
+          </article>
+        </section>
+
+        <section id="io" class="panel-grid four-col">
+          <article class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">GPIO</p>
+                <h3>LED / Switch / Button</h3>
+              </div>
+            </div>
+            <div class="key-grid" id="keyGrid" style="display: flex; gap: 8px; margin-bottom: 12px;"></div>
+            <div class="led-grid" id="ledGrid"></div>
+            <div class="switch-grid" id="switchGrid"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Display</p>
+                <h3>7-Segment (HEX0-7)</h3>
+              </div>
+            </div>
+            <div class="hex-grid" style="display: flex; gap: 8px; margin-bottom: 16px;">
+              <input id="hex7" maxlength="1" value="D" style="width: 32px; text-align: center; padding: 4px;" aria-label="HEX 7" />
+              <input id="hex6" maxlength="1" value="E" style="width: 32px; text-align: center; padding: 4px;" aria-label="HEX 6" />
+              <input id="hex5" maxlength="1" value="2" style="width: 32px; text-align: center; padding: 4px;" aria-label="HEX 5" />
+              <input id="hex4" maxlength="1" value="-" style="width: 32px; text-align: center; padding: 4px;" aria-label="HEX 4" />
+              <input id="hex3" maxlength="1" value="1" style="width: 32px; text-align: center; padding: 4px;" aria-label="HEX 3" />
+              <input id="hex2" maxlength="1" value="5" style="width: 32px; text-align: center; padding: 4px;" aria-label="HEX 2" />
+              <input id="hex1" maxlength="1" value="0" style="width: 32px; text-align: center; padding: 4px;" aria-label="HEX 1" />
+              <input id="hex0" maxlength="1" value=" " style="width: 32px; text-align: center; padding: 4px;" aria-label="HEX 0" />
+            </div>
+            <button class="primary-button full" id="hexApplyBtn" type="button">Hien thi 7-seg</button>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Display</p>
+                <h3>LCD 16x2</h3>
+              </div>
+            </div>
+            <input type="text" id="lcdInput" placeholder="Nhap noi dung LCD (max 32)" style="width: 100%; margin-bottom: 16px; padding: 8px;" />
+            <button class="primary-button full" id="lcdApplyBtn" type="button">Hien thi LCD</button>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Display</p>
+                <h3>VGA Controller</h3>
+              </div>
+            </div>
+            <select id="vgaPattern" style="width: 100%; margin-bottom: 16px; padding: 8px;">
+              <option value="colorbar">Color Bars</option>
+              <option value="checkerboard">Checkerboard</option>
+              <option value="solid_red">Solid Red</option>
+            </select>
+            <button class="primary-button full" id="vgaApplyBtn" type="button">Doi hinh VGA</button>
+          </article>
+        </section>
+
+        <section id="storage" class="panel-grid two-col" style="margin-top: 24px;">
+          <article class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Storage</p>
+                <h3>SD Card Explorer</h3>
+              </div>
+              <button class="secondary-button compact" id="sdListBtn" type="button">Quet the SD</button>
+            </div>
+            <div id="sdFileList" style="min-height: 100px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 12px; font-family: monospace; font-size: 13px; color: #a1a1aa; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 12px;">
+              Vui long quet de xem danh sach file...
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Storage</p>
+                <h3>Doc file tu SD</h3>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+              <input type="text" id="sdFileName" placeholder="VD: data.txt" style="flex: 1; padding: 8px;" />
+              <button class="primary-button" id="sdReadBtn" type="button">Doc file</button>
+            </div>
+            <textarea id="sdContent" spellcheck="false" readonly style="height: 100px; background: rgba(0,0,0,0.3); color: #fff;"></textarea>
+          </article>
+        </section>
+
+        <section id="logic" class="panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Log</p>
+              <h3>Nhat ky truyen nhan</h3>
+            </div>
+            <button class="icon-button" id="clearLogBtn" title="Xoa log" aria-label="Xoa log">×</button>
+          </div>
+          <pre class="log-view" id="logView" aria-live="polite"></pre>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>

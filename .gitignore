@@ -1,0 +1,23 @@
+# Quartus
+db/
+incremental_db/
+output_files/
+*.rpt
+*.summary
+*.qws
+*.jdi
+
+# Arduino/ESP32
+build/
+.pio/
+*.hex
+*.bin
+
+# Web
+node_modules/
+.env
+
+# General
+.vscode/
+*.bak
+*.orig

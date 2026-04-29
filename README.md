@@ -3,8 +3,24 @@
 ![Architecture](https://img.shields.io/badge/Architecture-End--to--End-blue)
 ![Platform](https://img.shields.io/badge/Platform-ESP32%20%2B%20Cyclone%20IV-orange)
 ![Tech](https://img.shields.io/badge/Tech-Firebase%20%7C%20WebSocket-red)
+![Status](https://img.shields.io/badge/Status-Completed-success)
 
 A complete end-to-end IoT solution that bridges low-level hardware control with modern web technologies. This project allows remote monitoring and control of an FPGA board through a web-based dashboard using an ESP32 as a high-speed communication bridge.
+
+---
+
+## 🖥️ Web Dashboard Interface
+The project features a comprehensive web interface designed for real-time hardware interaction, featuring low-latency communication and detailed system logging.
+
+<p align="center">
+  <img src="images/dashboard_top.png" alt="Dashboard Control Panel" width="800">
+</p>
+
+<p align="center">
+  <img src="images/dashboard_bottom.png" alt="Terminal and SD Explorer" width="800">
+</p>
+
+---
 
 ## 🌟 Overview
 
@@ -33,4 +49,4 @@ This system demonstrates the integration of three distinct layers:
 3.  **Web**: Open `web/index.html` in your browser. Configure the IP address of your ESP32 or enter your Firebase credentials to start controlling the hardware.
 
 ---
-*Developed by Pham Van Minh - Hanoi University of Science and Technology.*
+**Developed by Pham Van Minh - Hanoi University of Science and Technology.**

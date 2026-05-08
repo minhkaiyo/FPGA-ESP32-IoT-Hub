@@ -36,6 +36,18 @@ This system demonstrates the integration of three distinct layers:
 - **Modern Dashboard**: Features real-time signal analysis, terminal logging, and a user-friendly interface built with Bootstrap and vanilla JS.
 - **Hardware Abstraction**: Verilog modules designed for clean peripheral mapping and robust SPI synchronization.
 
+## 🖥️ Web Dashboard
+
+The system features a modern, responsive web interface for full system orchestration:
+
+<p align="center">
+  <img src="images/FPGA_ESP32_1.png" width="800" alt="Main Dashboard">
+</p>
+
+<p align="center">
+  <img src="images/FPGA_ESP32_2.png" width="800" alt="Switch Monitoring & SD Storage">
+</p>
+
 ## 🛠 System Components
 
 - **`/fpga`**: Verilog source files, including `bi_spi_test.v` and top-level integration.
